@@ -15,12 +15,30 @@ typedef struct valuef_s
     int denominator;
 } valuef_t;
 
-/*This Linked List is to keep variables for set operation*/
-typedef struct node_s
+
+// function with no parameters struct
+typedef struct function0_s
 {
-    valuef_t data;
-    char name[30]; //variable name
-    struct node_s *next; //pointer to next node
-}node_t;
+    char name[30];
+    char body[100];
+} function0_t;
+
+// function with one parameter struct
+typedef struct function1_s
+{
+    char name[30];
+    char parameter[30];
+    char body[100];
+} function1_t;
+
+// function with two parameters struct
+typedef struct function2_s
+{
+    char name[30];
+    char parameter1[30];
+    char parameter2[30];
+    char body[100];
+} function2_t;
+
 
 #endif /* HELPERS_H */

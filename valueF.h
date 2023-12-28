@@ -11,7 +11,6 @@ valuef_t createValueF(char *str){
     valuef.numerator = atoi(token);
     token = strtok(NULL, "f");
     valuef.denominator = atoi(token);
-    printf("numerator: %d, denominator: %d\n", valuef.numerator, valuef.denominator);
     return valuef;
 }
 
@@ -25,7 +24,6 @@ int findGCD(int a, int b){
 // simplify valuef
 valuef_t simplifyF(valuef_t valuef){
     int gcd = findGCD(valuef.numerator, valuef.denominator);
-    printf("gcd: %d\n", gcd);
     valuef.numerator /= gcd;
     valuef.denominator /= gcd;
     return valuef;
@@ -68,6 +66,25 @@ char *valuefToString(valuef_t valuef){
     char *str = malloc(sizeof(char) * 100);
     sprintf(str, "%df%d", valuef.numerator, valuef.denominator);
     return str;
+}
+
+int equalF(valuef_t a, valuef_t b){
+    if (a.numerator == b.numerator && a.denominator == b.denominator)
+        return 1;
+    return 0;
+}
+
+int lessThanF(valuef_t a, valuef_t b){
+    if (a.numerator * b.denominator < b.numerator * a.denominator)
+        return 1;
+    return 0;
+}
+
+valuef_t createZeroValueF(){
+    valuef_t valuef;
+    valuef.numerator = 0;
+    valuef.denominator = 1;
+    return valuef;
 }
 
 

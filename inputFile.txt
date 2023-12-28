@@ -1,2 +1,25 @@
-(+ 55f1 2f2)
-(- 6f2 22f22)
+(+ 4f1 5f1)
+
+(equal 4f1 4f1)
+
+(set x 5f2)
+x
+
+(set y 6f2)
+y
+
+(equal x y)
+
+(less x y)
+
+(less y x)
+
+;; This is a comment line
+
+(and true true)
+(and true false)
+(or false false)
+(or true false)
+
+(if (or false false) (set x 6f2))
+x

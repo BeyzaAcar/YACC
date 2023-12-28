@@ -13,6 +13,8 @@ void writeList(int *list);
 
 // /*functions*/
 #include "valueF.h" //functions for fractional numbers
+#include "variables.h" //functions for variables (set, get)
+
 
 %}
 
@@ -30,8 +32,6 @@ void writeList(int *list);
 
 %token OP_OP
 %token OP_CP
-%token OP_OC
-%token OP_CC
 %token OP_COMMA
  /*tokens for keywords in g++ language*/
 %token KW_AND
@@ -53,27 +53,25 @@ void writeList(int *list);
 %token KW_TRUE
 %token KW_FALSE
 %token COMMENT
-/*token for value*/
+
 %token <fractionalNum> VALUEF
-/* token for identifier*/
 %token <str> IDENTIFIER
 
 /*Types*/
 %type <fractionalNum> EXPI
 %type <num> EXPB
-
 %start START
+
 %%
 /*gpp Concrete Syntax*/
-/*START -> INPUT*/
 START:
-    EXPI {fprintf(outputFile,"SYNTAX OK. \nResult: %s\n", valuefToString($1) );}
+    EXPI {printf("expi"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", valuefToString($1) );}
     |
-    EXPB {fprintf(outputFile,"SYNTAX OK. \nResult: %s\n", $1 == 1 ? "T" : "NIL");}
+    EXPB {printf("expb"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $1 == 1 ? "TRUE" : "FALSE");}
     |
-    START EXPI {fprintf(outputFile,"SYNTAX OK. \nResult: %s\n", valuefToString($2));}
+    START EXPI {fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", valuefToString($2));}
     |
-    START EXPB {fprintf(outputFile,"SYNTAX OK. \nResult: %s\n", $2 == 1 ? "T" : "NIL");}
+    START EXPB {printf("start expb"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $2 == 1 ? "TRUE" : "FALSE");}
     |
     COMMENT {}
     |
@@ -84,50 +82,45 @@ START:
     START OP_OP KW_EXIT OP_CP { printf("File has created!\n"); exit(-1); }
     ;
 EXPI:
-    /* (+ EXPI EXPI) G++ Syntax*/
     OP_OP OP_PLUS EXPI EXPI OP_CP  { $$ = sumF($3, $4); }
     |
-    /* (- EXPI EXPI) */
     OP_OP OP_MINUS EXPI EXPI OP_CP { $$ = subF($3, $4); }
     |
-    /* (* EXPI EXPI) */
     OP_OP OP_MULT EXPI EXPI OP_CP  { $$ = multF($3, $4); }
     |
-    /* (/ EXPI EXPI) */
     OP_OP OP_DIV EXPI EXPI OP_CP   {  $$ = divF($3, $4); }
     |
-    IDENTIFIER {/*$$ = getDataOfVariable($1); */}
+    IDENTIFIER {$$ = getVariableValue($1); }
     |
     VALUEF {$$ = $1;}
-
     |
-    OP_OP KW_SET IDENTIFIER EXPI OP_CP {/*$$ = $4; addNewVariable($3, $4);*/}
+    OP_OP KW_SET IDENTIFIER EXPI OP_CP { $$ = $4; setVariable($3, $4);}
     |
-    OP_OP KW_IF EXPB EXPI OP_CP {/* $$ = isTrue($3) ? $4 : 0; */ }
+    OP_OP KW_IF EXPB EXPI OP_CP { $$ = $3 ? $4 : createZeroValueF(); }  
     |
     OP_OP KW_FOR EXPB EXPI OP_CP { /* $$ = $4; for(int i=0; isTrue($3); ++i){$4 = $4;}*/ }
     |
     OP_OP KW_IF EXPB EXPI EXPI OP_CP { /* $$ = isTrue($3) ? $4 : $5; */ }
     |
-    OP_OP KW_DISP EXPI OP_CP { $$ = $3; fprintf(outputFile,"Display : %d\n", $3);}
+    OP_OP KW_DISP EXPI OP_CP { /*$$ = $3; fprintf(outputFile,"Display : %d\n", $3);*/}
     ;
 
 EXPB:
-    OP_OP KW_AND EXPB EXPB OP_CP {/* $$ = $3 && $4; */}
+    OP_OP KW_AND EXPB EXPB OP_CP { $$ = $3 && $4;}
     |
-    OP_OP KW_OR EXPB EXPB OP_CP  {/* $$ = $3 || $4; */}
+    OP_OP KW_OR EXPB EXPB OP_CP  { $$ = $3 || $4; }
     |
-    OP_OP KW_NOT EXPB OP_CP  {/* $$ = ! ($3); */}
+    OP_OP KW_NOT EXPB OP_CP  { $$ = ! ($3); }
     |
-    OP_OP KW_EQUAL EXPB EXPB OP_CP {/* $$ = ($3 == $4); */}
+    OP_OP KW_EQUAL EXPB EXPB OP_CP { $$ = ($3 == $4); }
     |
-    OP_OP KW_EQUAL EXPI EXPI OP_CP {/* $$ = ($3 == $4); */}
+    OP_OP KW_EQUAL EXPI EXPI OP_CP { $$ = equalF($3, $4); }
     |
-    OP_OP KW_LESS EXPI EXPI OP_CP {/* $$ = $3 < $4; */}
+    OP_OP KW_LESS EXPI EXPI OP_CP { $$ = lessThanF($3, $4); }
     |
-    KW_TRUE  {/* $$ = 1; */}
+    KW_TRUE  { $$ = 1; }
     |
-    KW_FALSE   {/* $$ = 0; */}
+    KW_FALSE   { $$ = 0; }
     |
     OP_OP KW_DISP EXPB OP_CP { /* $$ = $3; fprintf(outputFile,"Display : %s\n", ($3 ? "T":"NIL")); */}
     ;
@@ -136,6 +129,7 @@ EXPB:
 %%
 
 int yyerror(char *error) {
+    // this function is called when an error occurs. for example, when the input is not in the language. (syntax error)
     fprintf(outputFile, "SYNTAX ERROR \n");
 }
 
