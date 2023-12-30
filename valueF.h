@@ -40,7 +40,6 @@ valuef_t createValueF(char *str){
     char *denominator = malloc(sizeof(char) * 10); // max 10 digits
     int i = 0;
     while (str[i] != 'f'){
-        printf("str[i]: %c\n", str[i]);
         numerator[i] = str[i];
         i++;
     }

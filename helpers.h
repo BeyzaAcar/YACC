@@ -40,5 +40,4 @@ typedef struct function2_s
     char body[100];
 } function2_t;
 
-
 #endif /* HELPERS_H */

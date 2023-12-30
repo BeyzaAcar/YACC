@@ -1,24 +1,4 @@
-(+ 4f2 (- 5f5 3f3))
 
-(+ 4f1 5f1)
+(+ (+ 4f2 z) y)
 
-(equal 4f1 4f1)
-
-(set x 5f2)
-(x)
-
-(set y 6f2)
-(y)
-
-(equal (x) (y))
-
-(less (x) (y))
-
-(less (y) (x))
-
-;; This is a comment line
-
-(and true true)
-(and true false)
-(or false false)
-(or true false)
+(def sum x y (+ x y))

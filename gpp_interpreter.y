@@ -5,13 +5,13 @@
 #include <string.h> //for string operations
 
 #include "helpers.h" // for all the structs (valuef_t, variable_t, function_t)
+#include "helperMethods.h" // for all the helper methods 
 
 FILE *inputFile,*outputFile, *strFile; //input and output files for reading and writing
 
 extern FILE *yyin;
 void writeList(int *list);
 
-// /*functions*/
 #include "valueF.h" //functions for fractional numbers
 #include "variables.h" //functions for variables (set, get)
 #include "functionsDef.h" //functions for functions definitions (set, get)
@@ -60,6 +60,7 @@ void writeList(int *list);
 /*Types*/
 %type <str> EXPI
 %type <num> EXPB
+%type <str> FUNCTION
 %start START
 
 %%
@@ -82,13 +83,25 @@ START:
     START OP_OP KW_EXIT OP_CP { printf("File has created!\n"); exit(-1); }
     ;
 EXPI:
-    OP_OP OP_PLUS EXPI EXPI OP_CP  { $$ = sumF($3, $4); }
+    OP_OP OP_PLUS EXPI EXPI OP_CP  { 
+                                        if(isDigit($3[0]) && isDigit($4[0])){
+                                            $$ = sumF($3, $4); 
+                                        } 
+                                        else{
+                                            //string concat ( new string: (+ $3 $4) )
+                                            char * result = createExpString($3, $4, "+");
+                                            $$ = result;
+                                        }
+                                    }
+
     |
     OP_OP OP_MINUS EXPI EXPI OP_CP { $$ = subF($3, $4); } 
     |
     OP_OP OP_MULT EXPI EXPI OP_CP  { $$ = multF($3, $4); }
     |
     OP_OP OP_DIV EXPI EXPI OP_CP   {  $$ = divF($3, $4); }
+    |
+    FUNCTION { printf("a function named %s is created\n", $1); $$ = $1; }
     |
     OP_OP IDENTIFIER OP_CP {$$ = getVariableValue($2); }
     |
@@ -127,8 +140,25 @@ EXPB:
     OP_OP KW_DISP EXPB OP_CP { /* $$ = $3; fprintf(outputFile,"Display : %s\n", ($3 ? "T":"NIL")); */}
     ;
 
-    
-
+FUNCTION:
+    // 2 parameters function definitions
+    OP_OP KW_DEF IDENTIFIER IDENTIFIER IDENTIFIER EXPI OP_CP { 
+                                                                $$ = $3; 
+                                                                createFunction2($3, $4, $5, $6); 
+                                                            }
+    |
+    // 1 parameter function definitions
+    OP_OP KW_DEF IDENTIFIER IDENTIFIER EXPI OP_CP { 
+                                                    $$ = $3; 
+                                                    createFunction1($3, $4, $5); 
+                                                }
+    |
+    // 0 parameter function definitions
+    OP_OP KW_DEF IDENTIFIER IDENTIFIER OP_CP { 
+                                                $$ = $3; 
+                                                createFunction0($3, $4); 
+                                            }
+    ;
 %%
 
 int yyerror(char *error) {

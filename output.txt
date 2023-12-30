@@ -1,0 +1,4 @@
+CORRECT SYNTAX. 
+Result: (+ (+ 4f2 z) y)
+CORRECT SYNTAX. 
+Result: sum
