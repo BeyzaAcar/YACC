@@ -22,10 +22,11 @@
 \, { return OP_COMMA; }
 
 and { return KW_AND; }
+def { return KW_DEF; }
 or { return KW_OR; }
 not { return KW_NOT; }
-equal { return KW_EQUAL; }
-less { return KW_LESS; }
+equal {printf(".l dosysasinda equal donderiyom\n"); return KW_EQUAL; }
+less {printf(".l dosysasinda less donderiyom\n"); return KW_LESS; }
 nil { return KW_NIL; }
 list { return KW_LIST; }
 append { return KW_APPEND; }
@@ -55,11 +56,14 @@ false { return KW_FALSE; }
                     }
 
  /* rule for identifier*/
-[a-zA-Z][0-9a-zA-Z]* {strcpy(yylval.str, yytext);
+[a-zA-Z][0-9a-zA-Z]* {
+                      printf("seg fault ???\n");
+                      printf("yylval.str = %d\n", yylval.str);
+                      yylval.str = malloc(strlen(yytext)+1); //+1 for '\0' at the end
+                      strcpy(yylval.str, yytext);
                       printf(".l dosyasinda IDENTIFIER dönderiyom\n");
                       return IDENTIFIER; }
-[\n\f\r\t ] {printf(".l dosyasinda ignoreluyom\n");} /*ignorable tokens*/
-
+[\n\f\r\t ] {} /*ignorable tokens*/
 
 
 

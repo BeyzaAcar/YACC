@@ -9,8 +9,8 @@
 /*This Linked List is to keep variables for set operation*/
 typedef struct node_s
 {
-    valuef_t data;
-    char name[30]; //variable name
+    char* data;
+    char *name; //variable name
     struct node_s *next; //pointer to next node
 }node_t;
 
@@ -26,59 +26,68 @@ void printVariables()
     node_t *temp = head;
     while(temp != NULL)
     {
-        printf("%s = %d/%d\n", temp->name, temp->data.numerator, temp->data.denominator);
+        printf("%s = %s\n", temp->name, temp->data);
         temp = temp->next;
-    }
+    }   
 }
 
 
 
+//KONTROL EDILECEK!!!!!!!!!
 // function to create a new node
-void setVariable(char *name, valuef_t data) // update can be done in this function too
+void setVariable(char *name, char* data) // update can be done in this function too
 {
-    node_t *newNode = (node_t *)malloc(sizeof(node_t));
-    newNode->data = data;
-    strcpy(newNode->name, name);
-    newNode->next = NULL;
-
-    if(head == NULL) // if list is empty
+    printf("sette alıyorum\n");
+    node_t *temp = head;
+    // if head is null, create a new node and assign it to head 
+    if(head == NULL)
     {
-        head = newNode;
+        head = (node_t*)malloc(sizeof(node_t));
+        head->name = name;
+        head->data = data;
+        head->next = NULL;
+        return;
     }
-    else // if list is not empty
+    // if head is not null, traverse the linked list and check if the variable is already defined   
+    while(temp != NULL)
     {
-        node_t *temp = head;
-        while(temp != NULL)
+        if(strcmp(temp->name, name) == 0)
         {
-            if(strcmp(temp->name, name) == 0) // if variable is already defined, update it
-            {
-                temp->data = data;
-                return;
-            }
-            temp = temp->next;
+            temp->data = data;
+            return;
         }
-        newNode->next = head; // add new node to the beginning of the list if variable is not defined
-        head = newNode;
+        temp = temp->next;
     }
+    // if variable is not defined, create a new node and add it to the end of the linked list
+    temp = head;
+    while(temp->next != NULL)
+    {
+        temp = temp->next;
+    }
+    temp->next = (node_t*)malloc(sizeof(node_t));
+    temp->next->name = name;
+    temp->next->data = data;
+    temp->next->next = NULL;
+    return;
 }
 
 // function to get a variable from linked list
-valuef_t getVariableValue(char *name)
+char* getVariableValue(char *name)
 {
-    printf("evet buraya geliyom dogrudur\n");
+    printf("gette alıyorum\n");
     node_t *temp = head;
     while(temp != NULL)
     {
         if(strcmp(temp->name, name) == 0)
         {
+            printf("variable %s is defined\n", name);
+            printf("value of %s is %s\n", name, temp->data);
             return temp->data;
         }
         temp = temp->next;
     }
     printf("Variable %s is not defined\n", name);
-    //return a valuef_t with numerator = 0 and denominator = 0
-    //return createZeroValueF();
-    exit(0);
+    return NULL;
 }
 
 

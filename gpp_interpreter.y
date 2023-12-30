@@ -1,12 +1,12 @@
 %{
 /*definitions*/
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdio.h> 
+#include <stdlib.h> //for exit function and malloc
+#include <string.h> //for string operations
 
-#include "helpers.h"
+#include "helpers.h" // for all the structs (valuef_t, variable_t, function_t)
 
-FILE *inputFile,*outputFile, *strFile;
+FILE *inputFile,*outputFile, *strFile; //input and output files for reading and writing
 
 extern FILE *yyin;
 void writeList(int *list);
@@ -14,14 +14,14 @@ void writeList(int *list);
 // /*functions*/
 #include "valueF.h" //functions for fractional numbers
 #include "variables.h" //functions for variables (set, get)
-
+#include "functionsDef.h" //functions for functions definitions (set, get)
 
 %}
 
 %union{
     int num;
     int *nums;
-    char str[30];
+    char *str;
     valuef_t fractionalNum;
 }
  /*tokens of operators*/
@@ -44,7 +44,7 @@ void writeList(int *list);
 %token KW_APPEND
 %token KW_CONCAT
 %token KW_SET
-%token KW_DEFFUN
+%token KW_DEF
 %token KW_FOR
 %token KW_IF
 %token KW_EXIT
@@ -58,18 +58,18 @@ void writeList(int *list);
 %token <str> IDENTIFIER
 
 /*Types*/
-%type <fractionalNum> EXPI
+%type <str> EXPI
 %type <num> EXPB
 %start START
 
 %%
 /*gpp Concrete Syntax*/
 START:
-    EXPI {printf("expi"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", valuefToString($1) );}
+    EXPI {printf("expi"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $1 );}
     |
     EXPB {printf("expb"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $1 == 1 ? "TRUE" : "FALSE");}
     |
-    START EXPI {fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", valuefToString($2));}
+    START EXPI {fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $2); printf("expression is : %s\n", $2);}
     |
     START EXPB {printf("start expb"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $2 == 1 ? "TRUE" : "FALSE");}
     |
@@ -84,19 +84,21 @@ START:
 EXPI:
     OP_OP OP_PLUS EXPI EXPI OP_CP  { $$ = sumF($3, $4); }
     |
-    OP_OP OP_MINUS EXPI EXPI OP_CP { $$ = subF($3, $4); }
+    OP_OP OP_MINUS EXPI EXPI OP_CP { $$ = subF($3, $4); } 
     |
     OP_OP OP_MULT EXPI EXPI OP_CP  { $$ = multF($3, $4); }
     |
     OP_OP OP_DIV EXPI EXPI OP_CP   {  $$ = divF($3, $4); }
     |
-    IDENTIFIER {$$ = getVariableValue($1); }
+    OP_OP IDENTIFIER OP_CP {$$ = getVariableValue($2); }
     |
-    VALUEF {$$ = $1;}
+    IDENTIFIER {$$ = $1;} // an identifier in function definition
     |
-    OP_OP KW_SET IDENTIFIER EXPI OP_CP { $$ = $4; setVariable($3, $4);}
+    VALUEF {$$ = valuefToString($1) ;}
     |
-    OP_OP KW_IF EXPB EXPI OP_CP { $$ = $3 ? $4 : createZeroValueF(); }  
+    OP_OP KW_SET IDENTIFIER EXPI OP_CP {printf("burdayim sette\n"); $$ = $4; setVariable($3, $4);}
+    |
+    OP_OP KW_IF EXPB EXPI OP_CP { $$ = $3 ? $4 : "FALSE"; }  
     |
     OP_OP KW_FOR EXPB EXPI OP_CP { /* $$ = $4; for(int i=0; isTrue($3); ++i){$4 = $4;}*/ }
     |
@@ -125,6 +127,7 @@ EXPB:
     OP_OP KW_DISP EXPB OP_CP { /* $$ = $3; fprintf(outputFile,"Display : %s\n", ($3 ? "T":"NIL")); */}
     ;
 
+    
 
 %%
 

@@ -1,18 +1,20 @@
+(+ 4f2 (- 5f5 3f3))
+
 (+ 4f1 5f1)
 
 (equal 4f1 4f1)
 
 (set x 5f2)
-x
+(x)
 
 (set y 6f2)
-y
+(y)
 
-(equal x y)
+(equal (x) (y))
 
-(less x y)
+(less (x) (y))
 
-(less y x)
+(less (y) (x))
 
 ;; This is a comment line
 
@@ -20,6 +22,3 @@ y
 (and true false)
 (or false false)
 (or true false)
-
-(if (or false false) (set x 6f2))
-x

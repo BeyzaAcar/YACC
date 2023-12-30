@@ -5,11 +5,11 @@ gpp_lexer.out:	gpp_lexer.c
 		cc -g gpp_lexer.c y.tab.c -ll -o gpp_interpreter.out
 
 clean: 
-		rm -f output.txt
-		rm -f gpp_interpreter.out
 		rm -f gpp_lexer.c
 		rm -f y.tab.c
 		rm -f y.tab.h
+		rm -f output.txt
+		rm -f gpp_interpreter.out
 
 clear:
 	clear
