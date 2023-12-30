@@ -15,7 +15,6 @@ typedef struct valuef_s
     int denominator;
 } valuef_t;
 
-
 // function with no parameters struct
 typedef struct function0_s
 {
@@ -39,5 +38,7 @@ typedef struct function2_s
     char parameter2[30];
     char body[100];
 } function2_t;
+
+
 
 #endif /* HELPERS_H */

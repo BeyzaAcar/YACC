@@ -25,7 +25,7 @@
 //change valuef to string for printing
 char *valuefToString(valuef_t valuef){
     char *str = malloc(sizeof(char) * 100);
-    sprintf(str, "%df%d", valuef.numerator, valuef.denominator);
+    sprintf(str, "%df%d", valuef.numerator, valuef.denominator); //sprintf writes to string instead of stdout and adds '\0' at the end 
     return str;
 }
 
@@ -145,6 +145,194 @@ valuef_t createZeroValueF(){
     valuef.denominator = 1;
     return valuef;
 }
+
+// check if a character is a digit
+int isDigitF(char c){
+    if(c >= '0' && c <= '9')
+        return 1;
+    return 0;
+}
+
+// EVALUATE AN EXPRESSION WITH VALUEF OPERANDS RECURSIVELY USING THE ABOVE FUNCTIONS
+// example : (- (+ 2f2 8f4) 1f1) --> (- 3f1 1f1) --> 2f1 
+
+int paranthesesHashList[1000] ; // list of parantheses hash
+
+//This method finds the pairs of parantheses and adds them to the paranthesesHashList 
+//Example: (- (+ 2f2 8f4) 1f1) --> so there are open parantheses at index 0 and 3 and close parantheses at index 13 and 18
+//so paranthesesHashList[0] = 13 and paranthesesHashList[3] = 18 and all other elements of paranthesesHashList are -1
+//So when i try to reach the end of the parantheses pair of index 0, i can reach it by paranthesesHashList[0] = 13th index
+void findParantheses(char *expression){
+    //fill with -1 first
+    printf("findParantheses\n");
+    for(int i = 0; i < 1000; i++)
+        paranthesesHashList[i] = -1;
+
+    int begin = 0;
+    int end = strlen(expression) - 1;
+    while(end> begin && end+begin < strlen(expression) && end > 0 && begin < strlen(expression))
+    {
+        printf("begin: %d\n", begin);
+        printf("end: %d\n", end);
+        while (expression[begin] != '(' && begin < strlen(expression))
+        {
+            printf("begin inside: %d\n", begin);
+            begin++;
+        }
+        while(expression[end] != ')' && end > 0)
+        {
+            printf("end inside: %d\n", end);
+            end--;
+        }
+
+        paranthesesHashList[begin] = end;
+
+        begin++;
+        end--;
+    }
+    paranthesesHashList[begin-1] = -1;
+    
+}
+
+void printParanthesesHashList(){
+    printf("printParanthesesHashList\n");
+    for(int i = 0; i < 25; i++)
+        printf("paranthesesHashList[%d] = %d\n", i, paranthesesHashList[i]);
+}
+
+
+/**
+ * begin offset is the ditance from the beginning of the original expression
+ * end offset is the distance from the end of the original expression 
+ * This method returns the evaluated expression in a string recursively
+ * Every pair of parantheses is added to the paranthesesHashList (Check findParantheses method to understand how it works)
+ * Example input : (- (+ 2f2 8f4) 1f1) --> (- 3f1 1f1) --> 2f1 
+*/
+char * evaluateExpressionHelper(char * expression, int beginOffset)
+{
+    //printf("evaluateExpressionHelper\n");
+    //printf("expression: %s\n", expression);
+    char * operand1 = malloc(sizeof(char) * 100);
+    char * operand2 = malloc(sizeof(char) * 100);
+    char operator = expression[1]; // operator is the second character of the expression 
+    //printf("operator: %c\n", operator);
+    int i = 1;
+    int lenExp = strlen(expression);
+    //first operand
+    while(i < lenExp)
+    {
+        if(isDigitF(expression[i])) // first operand is the raw valuef
+        {
+            int j = 0;
+            while(isDigitF(expression[i]) | expression[i] == 'f')
+            {
+                operand1[j] = expression[i];
+                i++;
+                j++;
+            }
+            operand1[j] = '\0';
+            break;
+        }
+        else if(expression[i] == '(') // first operand is an expression
+        {
+            int closeParanthesesIndex = paranthesesHashList[i + beginOffset];
+            //operand 1 is the expression between i and j 
+            int k = 0;
+            while(i < closeParanthesesIndex - beginOffset+1)
+            {
+                operand1[k] = expression[i];
+                i++;
+                k++;
+            }
+            operand1[k] = '\0';
+            // recursive call to evaluate the expression
+            operand1 = evaluateExpressionHelper(operand1, i + beginOffset); 
+            break;
+        }
+        i++;
+    }
+    //second operand
+    while(i < lenExp)
+    {
+        if(isDigitF(expression[i])) // second operand is the raw valuef
+        {
+            int j = 0;
+            while(isDigitF(expression[i]) | expression[i] == 'f')
+            {
+                operand2[j] = expression[i];
+                i++;
+                j++;
+            }
+            operand2[j] = '\0';
+            break;
+        }
+        else if(expression[i] == '(') // second operand is an expression
+        {
+            int closeParanthesesIndex = paranthesesHashList[i + beginOffset];
+            //operand 2 is the expression between i and j 
+            int k = 0;
+            while(i < closeParanthesesIndex - beginOffset)
+            {
+                operand2[k] = expression[i];
+                i++;
+                k++;
+            }
+            operand2[k] = '\0';
+            // recursive call to evaluate the expression
+            operand2 = evaluateExpressionHelper(operand2, i + beginOffset); 
+            break;
+        }
+        i++;
+    }
+    
+    printf("operand1: %s\n and the expression is %s\n", operand1, expression);
+    printf("operand2: %s\n and the expression is %s\n", operand2, expression);
+    printf("operator: %c\n", operator);
+    //evaluate the expression
+    char * result = malloc(sizeof(char) * 100);
+    switch(operator)
+    {
+        case '+':
+            result = sumF(operand1, operand2);
+            break;
+        case '-':
+            result = subF(operand1, operand2);
+            break;
+        case '*':
+            result = multF(operand1, operand2);
+            break;
+        case '/':
+            result = divF(operand1, operand2);
+            break;
+        //TODO: add other operators 
+        /*case '=':
+            if(equalF(operand1, operand2))
+                result = "1";
+            else
+                result = "0";
+            break;
+        case '<':
+            if(lessThanF(operand1, operand2))
+                result = "1";
+            else
+                result = "0";
+            break;
+            */
+        default:
+            printf("Invalid operator\n");
+            break;
+    }
+    return result;
+}
+
+//EVALUATE EXPRESSION RECURSIVELY 
+char * evaluateExpression(char * expression)
+{
+    evaluateExpressionHelper(expression, 0);
+}
+
+
+
 
 
 #endif // VALUEF_H

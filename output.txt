@@ -2,3 +2,5 @@ CORRECT SYNTAX.
 Result: (+ (+ 4f2 z) y)
 CORRECT SYNTAX. 
 Result: sum
+CORRECT SYNTAX. 
+Result: 8f1

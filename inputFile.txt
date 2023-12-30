@@ -1,4 +1,8 @@
 
 (+ (+ 4f2 z) y)
 
-(def sum x y (+ x y))
+(def sum x y (- (+ x      y) y))
+
+;; Function call
+
+( sum 8f1 6f1 )

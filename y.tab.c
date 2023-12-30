@@ -262,7 +262,8 @@ enum yysymbol_kind_t
   YYSYMBOL_START = 32,                     /* START  */
   YYSYMBOL_EXPI = 33,                      /* EXPI  */
   YYSYMBOL_EXPB = 34,                      /* EXPB  */
-  YYSYMBOL_FUNCTION = 35                   /* FUNCTION  */
+  YYSYMBOL_FUNCTIONDEF = 35,               /* FUNCTIONDEF  */
+  YYSYMBOL_FUNCTIONCALL = 36               /* FUNCTIONCALL  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -588,18 +589,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  27
+#define YYFINAL  28
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   186
+#define YYLAST   194
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  31
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  5
+#define YYNNTS  6
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  34
+#define YYNRULES  38
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  93
+#define YYNSTATES  98
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   285
@@ -651,10 +652,10 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    69,    69,    71,    73,    75,    77,    79,    81,    83,
-      86,    98,   100,   102,   104,   106,   108,   110,   112,   114,
-     116,   118,   120,   124,   126,   128,   130,   132,   134,   136,
-     138,   140,   145,   151,   157
+       0,    70,    70,    72,    74,    76,    78,    80,    82,    84,
+      87,    99,   110,   121,   132,   134,   136,   138,   140,   142,
+     144,   146,   148,   150,   154,   156,   158,   160,   162,   164,
+     166,   168,   170,   175,   181,   187,   195,   208,   213
 };
 #endif
 
@@ -675,7 +676,7 @@ static const char *const yytname[] =
   "KW_NOT", "KW_EQUAL", "KW_LESS", "KW_NIL", "KW_LIST", "KW_APPEND",
   "KW_CONCAT", "KW_SET", "KW_DEF", "KW_FOR", "KW_IF", "KW_EXIT", "KW_LOAD",
   "KW_DISP", "KW_TRUE", "KW_FALSE", "COMMENT", "VALUEF", "IDENTIFIER",
-  "$accept", "START", "EXPI", "EXPB", "FUNCTION", YY_NULLPTR
+  "$accept", "START", "EXPI", "EXPB", "FUNCTIONDEF", "FUNCTIONCALL", YY_NULLPTR
 };
 
 static const char *
@@ -685,7 +686,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-28)
+#define YYPACT_NINF (-30)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -699,16 +700,16 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      -5,    82,   -28,   -28,   -28,   -28,   -28,     1,   -28,   -28,
-     -28,    34,    34,    34,    34,    72,    72,    72,    44,    34,
-     -27,   -26,    72,    72,    -3,    44,    -2,   -28,   105,   -28,
-     -28,   -28,   140,    34,    34,    34,    34,   161,    72,    72,
-       2,   128,    34,    72,    34,    34,   -21,    34,    34,   -28,
-       9,    12,   -28,    18,    34,    24,    32,    35,    41,    72,
-      42,    45,   -28,    52,    57,    58,    60,     8,    64,    51,
-     -28,   -28,   -28,   -28,   -28,   -28,   -28,   -28,   -28,   -28,
-     -28,   -28,   -28,   -28,    34,    67,   -28,   -28,    68,    75,
-     -28,   -28,   -28
+      -4,    86,   -30,   -30,   -30,   -30,   -30,     2,   -30,   -30,
+     -30,   -30,    37,    37,    37,    37,    67,    67,    67,    46,
+      37,   -29,   -26,    67,    67,    -3,    46,     9,   -30,   109,
+     -30,   -30,   -30,   144,    37,    37,    37,    37,   169,    67,
+      67,    -2,   132,    37,    67,    37,    37,   -22,    37,    37,
+     -30,     3,    10,   -30,    53,    13,    37,    25,    33,    34,
+      42,    67,    43,    44,   -30,    47,    54,    57,    60,    95,
+      62,   148,   -30,   -30,   -30,    69,   -30,   -30,   -30,   -30,
+     -30,   -30,   -30,   -30,   -30,   -30,   -30,   -30,    37,    70,
+     -30,   -30,    73,   -30,    77,   -30,   -30,   -30
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -716,28 +717,28 @@ static const yytype_int16 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     0,    29,    30,     6,    17,    16,     0,     2,     3,
-      14,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     1,     0,     7,
-       4,     5,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     8,
-       0,     0,    15,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    25,     0,     0,     0,     0,     0,     0,     0,
-      22,    31,     9,    10,    11,    13,    12,    23,    24,    27,
-      26,    28,    18,    34,    16,     0,    20,    19,     0,     0,
-      33,    21,    32
+       0,     0,    30,    31,     6,    18,    17,     0,     2,     3,
+      14,    15,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     1,     0,
+       7,     4,     5,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       8,     0,     0,    16,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,    26,     0,     0,     0,     0,     0,
+       0,     0,    23,    32,    37,     0,     9,    10,    11,    13,
+      12,    24,    25,    28,    27,    29,    19,    35,    17,     0,
+      21,    20,     0,    36,     0,    34,    22,    33
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -28,   -28,     0,    39,   -28
+     -30,   -30,     0,    40,   -30,   -30
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     7,    50,    51,    10
+       0,     7,    51,    52,    10,    11
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -745,48 +746,50 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       8,    27,     1,    45,    46,    49,    52,    30,    28,    67,
-      62,    33,    34,    35,    36,    32,    83,    70,    42,    44,
-      71,     2,     3,     4,     5,     6,    72,     2,     3,    29,
-       5,     6,    73,    55,    56,    57,    58,     5,    84,     9,
-      74,    32,    63,    75,    65,    66,    31,    68,    69,    76,
-      77,    41,     0,    78,    38,    39,    40,    43,    32,    87,
-      79,    47,    48,     5,     6,    80,    81,    85,    82,    88,
-       2,     3,    86,     5,     6,    90,    91,    60,    61,    37,
-       5,     6,    64,    92,    89,    11,    12,    13,    14,     0,
-       0,     0,    15,    16,    17,    18,    19,     0,     2,     3,
-       0,    20,    21,    22,    23,    24,     0,    25,    11,    12,
-      13,    14,    26,     0,     0,    15,    16,    17,    18,    19,
-       0,     0,     0,     0,    20,    21,    22,    23,    53,     0,
-      25,    11,    12,    13,    14,    26,     0,     0,    15,    16,
-      17,    18,    19,    11,    12,    13,    14,    20,    21,    22,
-      23,     0,     0,    25,     0,     0,     0,     0,    26,    20,
-      21,    22,    23,     0,     0,    54,     0,     0,     0,     0,
-      26,    15,    16,    17,    18,    19,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,    59
+       8,    46,    28,     1,    47,    50,    64,    31,    69,    29,
+       0,    72,    34,    35,    36,    37,    33,    53,    73,    43,
+      45,    76,     2,     3,     4,     5,     6,    54,     2,     3,
+      30,     5,     6,    77,    57,    58,    59,    60,     5,     6,
+       9,    78,    79,    65,    33,    67,    68,    32,    70,    71,
+      80,    81,    82,    42,    75,    83,    39,    40,    41,    44,
+      33,    74,    84,    48,    49,    85,     5,     6,    86,    89,
+      90,    92,     2,     3,    38,     5,     6,    93,    95,    62,
+      63,    96,     5,     6,    66,    97,     0,     0,    94,    12,
+      13,    14,    15,     2,     3,     0,    16,    17,    18,    19,
+      20,     0,    33,    87,     0,    21,    22,    23,    24,    25,
+       0,    26,    12,    13,    14,    15,    27,     0,     0,    16,
+      17,    18,    19,    20,     5,    88,     0,     0,    21,    22,
+      23,    24,    55,     0,    26,    12,    13,    14,    15,    27,
+       0,     0,    16,    17,    18,    19,    20,    12,    13,    14,
+      15,    21,    22,    23,    24,    33,    91,    26,     0,     0,
+       0,     0,    27,    21,    22,    23,    24,     0,     0,    56,
+       0,     0,     0,     0,    27,     0,     0,     5,     6,    16,
+      17,    18,    19,    20,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,    61
 };
 
 static const yytype_int8 yycheck[] =
 {
-       0,     0,     7,    30,    30,     8,     8,     7,     7,    30,
-       8,    11,    12,    13,    14,     7,     8,     8,    18,    19,
-       8,    26,    27,    28,    29,    30,     8,    26,    27,    28,
-      29,    30,     8,    33,    34,    35,    36,    29,    30,     0,
-       8,     7,    42,     8,    44,    45,     7,    47,    48,     8,
-       8,     7,    -1,     8,    15,    16,    17,    18,     7,     8,
-       8,    22,    23,    29,    30,     8,     8,    67,     8,    69,
-      26,    27,     8,    29,    30,     8,     8,    38,    39,     7,
-      29,    30,    43,     8,    84,     3,     4,     5,     6,    -1,
-      -1,    -1,    10,    11,    12,    13,    14,    -1,    26,    27,
-      -1,    19,    20,    21,    22,    23,    -1,    25,     3,     4,
-       5,     6,    30,    -1,    -1,    10,    11,    12,    13,    14,
-      -1,    -1,    -1,    -1,    19,    20,    21,    22,    23,    -1,
-      25,     3,     4,     5,     6,    30,    -1,    -1,    10,    11,
-      12,    13,    14,     3,     4,     5,     6,    19,    20,    21,
-      22,    -1,    -1,    25,    -1,    -1,    -1,    -1,    30,    19,
-      20,    21,    22,    -1,    -1,    25,    -1,    -1,    -1,    -1,
-      30,    10,    11,    12,    13,    14,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    25
+       0,    30,     0,     7,    30,     8,     8,     7,    30,     7,
+      -1,     8,    12,    13,    14,    15,     7,     8,     8,    19,
+      20,     8,    26,    27,    28,    29,    30,    27,    26,    27,
+      28,    29,    30,     8,    34,    35,    36,    37,    29,    30,
+       0,     8,     8,    43,     7,    45,    46,     7,    48,    49,
+       8,     8,     8,     7,    54,     8,    16,    17,    18,    19,
+       7,     8,     8,    23,    24,     8,    29,    30,     8,    69,
+       8,    71,    26,    27,     7,    29,    30,     8,     8,    39,
+      40,     8,    29,    30,    44,     8,    -1,    -1,    88,     3,
+       4,     5,     6,    26,    27,    -1,    10,    11,    12,    13,
+      14,    -1,     7,     8,    -1,    19,    20,    21,    22,    23,
+      -1,    25,     3,     4,     5,     6,    30,    -1,    -1,    10,
+      11,    12,    13,    14,    29,    30,    -1,    -1,    19,    20,
+      21,    22,    23,    -1,    25,     3,     4,     5,     6,    30,
+      -1,    -1,    10,    11,    12,    13,    14,     3,     4,     5,
+       6,    19,    20,    21,    22,     7,     8,    25,    -1,    -1,
+      -1,    -1,    30,    19,    20,    21,    22,    -1,    -1,    25,
+      -1,    -1,    -1,    -1,    30,    -1,    -1,    29,    30,    10,
+      11,    12,    13,    14,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    25
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -794,15 +797,15 @@ static const yytype_int8 yycheck[] =
 static const yytype_int8 yystos[] =
 {
        0,     7,    26,    27,    28,    29,    30,    32,    33,    34,
-      35,     3,     4,     5,     6,    10,    11,    12,    13,    14,
-      19,    20,    21,    22,    23,    25,    30,     0,     7,    28,
-      33,    34,     7,    33,    33,    33,    33,     7,    34,    34,
-      34,     7,    33,    34,    33,    30,    30,    34,    34,     8,
-      33,    34,     8,    23,    25,    33,    33,    33,    33,    25,
-      34,    34,     8,    33,    34,    33,    33,    30,    33,    33,
-       8,     8,     8,     8,     8,     8,     8,     8,     8,     8,
-       8,     8,     8,     8,    30,    33,     8,     8,    33,    33,
-       8,     8,     8
+      35,    36,     3,     4,     5,     6,    10,    11,    12,    13,
+      14,    19,    20,    21,    22,    23,    25,    30,     0,     7,
+      28,    33,    34,     7,    33,    33,    33,    33,     7,    34,
+      34,    34,     7,    33,    34,    33,    30,    30,    34,    34,
+       8,    33,    34,     8,    33,    23,    25,    33,    33,    33,
+      33,    25,    34,    34,     8,    33,    34,    33,    33,    30,
+      33,    33,     8,     8,     8,    33,     8,     8,     8,     8,
+       8,     8,     8,     8,     8,     8,     8,     8,    30,    33,
+       8,     8,    33,     8,    33,     8,     8,     8
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -810,17 +813,17 @@ static const yytype_int8 yyr1[] =
 {
        0,    31,    32,    32,    32,    32,    32,    32,    32,    32,
       33,    33,    33,    33,    33,    33,    33,    33,    33,    33,
-      33,    33,    33,    34,    34,    34,    34,    34,    34,    34,
-      34,    34,    35,    35,    35
+      33,    33,    33,    33,    34,    34,    34,    34,    34,    34,
+      34,    34,    34,    35,    35,    35,    36,    36,    36
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     1,     1,     2,     2,     1,     2,     3,     4,
-       5,     5,     5,     5,     1,     3,     1,     1,     5,     5,
-       5,     6,     4,     5,     5,     4,     5,     5,     5,     1,
-       1,     4,     7,     6,     5
+       5,     5,     5,     5,     1,     1,     3,     1,     1,     5,
+       5,     5,     6,     4,     5,     5,     4,     5,     5,     5,
+       1,     1,     4,     7,     6,     5,     5,     4,     3
 };
 
 
@@ -1284,55 +1287,55 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* START: EXPI  */
-#line 69 "gpp_interpreter.y"
+#line 70 "gpp_interpreter.y"
          {printf("expi"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", (yyvsp[0].str) );}
-#line 1290 "y.tab.c"
+#line 1293 "y.tab.c"
     break;
 
   case 3: /* START: EXPB  */
-#line 71 "gpp_interpreter.y"
+#line 72 "gpp_interpreter.y"
          {printf("expb"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", (yyvsp[0].num) == 1 ? "TRUE" : "FALSE");}
-#line 1296 "y.tab.c"
+#line 1299 "y.tab.c"
     break;
 
   case 4: /* START: START EXPI  */
-#line 73 "gpp_interpreter.y"
+#line 74 "gpp_interpreter.y"
                {fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", (yyvsp[0].str)); printf("expression is : %s\n", (yyvsp[0].str));}
-#line 1302 "y.tab.c"
+#line 1305 "y.tab.c"
     break;
 
   case 5: /* START: START EXPB  */
-#line 75 "gpp_interpreter.y"
+#line 76 "gpp_interpreter.y"
                {printf("start expb"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", (yyvsp[0].num) == 1 ? "TRUE" : "FALSE");}
-#line 1308 "y.tab.c"
+#line 1311 "y.tab.c"
     break;
 
   case 6: /* START: COMMENT  */
-#line 77 "gpp_interpreter.y"
+#line 78 "gpp_interpreter.y"
             {}
-#line 1314 "y.tab.c"
+#line 1317 "y.tab.c"
     break;
 
   case 7: /* START: START COMMENT  */
-#line 79 "gpp_interpreter.y"
+#line 80 "gpp_interpreter.y"
                   {}
-#line 1320 "y.tab.c"
+#line 1323 "y.tab.c"
     break;
 
   case 8: /* START: OP_OP KW_EXIT OP_CP  */
-#line 81 "gpp_interpreter.y"
+#line 82 "gpp_interpreter.y"
                         { printf("File has created!\n"); exit(-1);}
-#line 1326 "y.tab.c"
+#line 1329 "y.tab.c"
     break;
 
   case 9: /* START: START OP_OP KW_EXIT OP_CP  */
-#line 83 "gpp_interpreter.y"
+#line 84 "gpp_interpreter.y"
                               { printf("File has created!\n"); exit(-1); }
-#line 1332 "y.tab.c"
+#line 1335 "y.tab.c"
     break;
 
   case 10: /* EXPI: OP_OP OP_PLUS EXPI EXPI OP_CP  */
-#line 86 "gpp_interpreter.y"
+#line 87 "gpp_interpreter.y"
                                    { 
                                         if(isDigit((yyvsp[-2].str)[0]) && isDigit((yyvsp[-1].str)[0])){
                                             (yyval.str) = sumF((yyvsp[-2].str), (yyvsp[-1].str)); 
@@ -1343,164 +1346,229 @@ yyreduce:
                                             (yyval.str) = result;
                                         }
                                     }
-#line 1347 "y.tab.c"
+#line 1350 "y.tab.c"
     break;
 
   case 11: /* EXPI: OP_OP OP_MINUS EXPI EXPI OP_CP  */
-#line 98 "gpp_interpreter.y"
-                                   { (yyval.str) = subF((yyvsp[-2].str), (yyvsp[-1].str)); }
-#line 1353 "y.tab.c"
-    break;
-
-  case 12: /* EXPI: OP_OP OP_MULT EXPI EXPI OP_CP  */
-#line 100 "gpp_interpreter.y"
-                                   { (yyval.str) = multF((yyvsp[-2].str), (yyvsp[-1].str)); }
-#line 1359 "y.tab.c"
-    break;
-
-  case 13: /* EXPI: OP_OP OP_DIV EXPI EXPI OP_CP  */
-#line 102 "gpp_interpreter.y"
-                                   {  (yyval.str) = divF((yyvsp[-2].str), (yyvsp[-1].str)); }
+#line 99 "gpp_interpreter.y"
+                                   { 
+                                        if(isDigit((yyvsp[-2].str)[0]) && isDigit((yyvsp[-1].str)[0])){
+                                                (yyval.str) = subF((yyvsp[-2].str), (yyvsp[-1].str)); 
+                                        } 
+                                        else{
+                                            //string concat ( new string: (+ $3 $4) )
+                                            char * result = createExpString((yyvsp[-2].str), (yyvsp[-1].str), "-");
+                                            (yyval.str) = result;
+                                        }
+                                    }
 #line 1365 "y.tab.c"
     break;
 
-  case 14: /* EXPI: FUNCTION  */
-#line 104 "gpp_interpreter.y"
-             { printf("a function named %s is created\n", (yyvsp[0].str)); (yyval.str) = (yyvsp[0].str); }
-#line 1371 "y.tab.c"
-    break;
-
-  case 15: /* EXPI: OP_OP IDENTIFIER OP_CP  */
-#line 106 "gpp_interpreter.y"
-                           {(yyval.str) = getVariableValue((yyvsp[-1].str)); }
-#line 1377 "y.tab.c"
-    break;
-
-  case 16: /* EXPI: IDENTIFIER  */
-#line 108 "gpp_interpreter.y"
-               {(yyval.str) = (yyvsp[0].str);}
-#line 1383 "y.tab.c"
-    break;
-
-  case 17: /* EXPI: VALUEF  */
+  case 12: /* EXPI: OP_OP OP_MULT EXPI EXPI OP_CP  */
 #line 110 "gpp_interpreter.y"
-           {(yyval.str) = valuefToString((yyvsp[0].fractionalNum)) ;}
-#line 1389 "y.tab.c"
+                                   { 
+                                        if(isDigit((yyvsp[-2].str)[0]) && isDigit((yyvsp[-1].str)[0])){
+                                                (yyval.str) = multF((yyvsp[-2].str), (yyvsp[-1].str)); 
+                                        } 
+                                        else{
+                                            //string concat ( new string: (+ $3 $4) )
+                                            char * result = createExpString((yyvsp[-2].str), (yyvsp[-1].str), "*");
+                                            (yyval.str) = result;
+                                        } 
+                                    }
+#line 1380 "y.tab.c"
     break;
 
-  case 18: /* EXPI: OP_OP KW_SET IDENTIFIER EXPI OP_CP  */
-#line 112 "gpp_interpreter.y"
-                                       {printf("burdayim sette\n"); (yyval.str) = (yyvsp[-1].str); setVariable((yyvsp[-2].str), (yyvsp[-1].str));}
+  case 13: /* EXPI: OP_OP OP_DIV EXPI EXPI OP_CP  */
+#line 121 "gpp_interpreter.y"
+                                   {  
+                                        if(isDigit((yyvsp[-2].str)[0]) && isDigit((yyvsp[-1].str)[0])){
+                                                (yyval.str) = divF((yyvsp[-2].str), (yyvsp[-1].str)); 
+                                        } 
+                                        else{
+                                            //string concat ( new string: (+ $3 $4) )
+                                            char * result = createExpString((yyvsp[-2].str), (yyvsp[-1].str), "/");
+                                            (yyval.str) = result;
+                                        }  
+                                    }
 #line 1395 "y.tab.c"
     break;
 
-  case 19: /* EXPI: OP_OP KW_IF EXPB EXPI OP_CP  */
-#line 114 "gpp_interpreter.y"
-                                { (yyval.str) = (yyvsp[-2].num) ? (yyvsp[-1].str) : "FALSE"; }
+  case 14: /* EXPI: FUNCTIONDEF  */
+#line 132 "gpp_interpreter.y"
+                { printf("a function named %s is created\n", (yyvsp[0].str)); (yyval.str) = (yyvsp[0].str); }
 #line 1401 "y.tab.c"
     break;
 
-  case 20: /* EXPI: OP_OP KW_FOR EXPB EXPI OP_CP  */
-#line 116 "gpp_interpreter.y"
-                                 { /* $$ = $4; for(int i=0; isTrue($3); ++i){$4 = $4;}*/ }
+  case 15: /* EXPI: FUNCTIONCALL  */
+#line 134 "gpp_interpreter.y"
+                 { printf("a function named %s is called\n", (yyvsp[0].str)); (yyval.str) = (yyvsp[0].str); }
 #line 1407 "y.tab.c"
     break;
 
-  case 21: /* EXPI: OP_OP KW_IF EXPB EXPI EXPI OP_CP  */
-#line 118 "gpp_interpreter.y"
-                                     { /* $$ = isTrue($3) ? $4 : $5; */ }
+  case 16: /* EXPI: OP_OP IDENTIFIER OP_CP  */
+#line 136 "gpp_interpreter.y"
+                           {(yyval.str) = getVariableValue((yyvsp[-1].str)); }
 #line 1413 "y.tab.c"
     break;
 
-  case 22: /* EXPI: OP_OP KW_DISP EXPI OP_CP  */
-#line 120 "gpp_interpreter.y"
-                             { /*$$ = $3; fprintf(outputFile,"Display : %d\n", $3);*/}
+  case 17: /* EXPI: IDENTIFIER  */
+#line 138 "gpp_interpreter.y"
+               {(yyval.str) = (yyvsp[0].str);}
 #line 1419 "y.tab.c"
     break;
 
-  case 23: /* EXPB: OP_OP KW_AND EXPB EXPB OP_CP  */
-#line 124 "gpp_interpreter.y"
-                                 { (yyval.num) = (yyvsp[-2].num) && (yyvsp[-1].num);}
+  case 18: /* EXPI: VALUEF  */
+#line 140 "gpp_interpreter.y"
+           {(yyval.str) = valuefToString((yyvsp[0].fractionalNum)) ;}
 #line 1425 "y.tab.c"
     break;
 
-  case 24: /* EXPB: OP_OP KW_OR EXPB EXPB OP_CP  */
-#line 126 "gpp_interpreter.y"
-                                 { (yyval.num) = (yyvsp[-2].num) || (yyvsp[-1].num); }
+  case 19: /* EXPI: OP_OP KW_SET IDENTIFIER EXPI OP_CP  */
+#line 142 "gpp_interpreter.y"
+                                       {printf("burdayim sette\n"); (yyval.str) = (yyvsp[-1].str); setVariable((yyvsp[-2].str), (yyvsp[-1].str));}
 #line 1431 "y.tab.c"
     break;
 
-  case 25: /* EXPB: OP_OP KW_NOT EXPB OP_CP  */
-#line 128 "gpp_interpreter.y"
-                             { (yyval.num) = ! ((yyvsp[-1].num)); }
+  case 20: /* EXPI: OP_OP KW_IF EXPB EXPI OP_CP  */
+#line 144 "gpp_interpreter.y"
+                                { (yyval.str) = (yyvsp[-2].num) ? (yyvsp[-1].str) : "FALSE"; }
 #line 1437 "y.tab.c"
     break;
 
-  case 26: /* EXPB: OP_OP KW_EQUAL EXPB EXPB OP_CP  */
-#line 130 "gpp_interpreter.y"
-                                   { (yyval.num) = ((yyvsp[-2].num) == (yyvsp[-1].num)); }
+  case 21: /* EXPI: OP_OP KW_FOR EXPB EXPI OP_CP  */
+#line 146 "gpp_interpreter.y"
+                                 { /* $$ = $4; for(int i=0; isTrue($3); ++i){$4 = $4;}*/ }
 #line 1443 "y.tab.c"
     break;
 
-  case 27: /* EXPB: OP_OP KW_EQUAL EXPI EXPI OP_CP  */
-#line 132 "gpp_interpreter.y"
-                                   { (yyval.num) = equalF((yyvsp[-2].str), (yyvsp[-1].str)); }
+  case 22: /* EXPI: OP_OP KW_IF EXPB EXPI EXPI OP_CP  */
+#line 148 "gpp_interpreter.y"
+                                     { /* $$ = isTrue($3) ? $4 : $5; */ }
 #line 1449 "y.tab.c"
     break;
 
-  case 28: /* EXPB: OP_OP KW_LESS EXPI EXPI OP_CP  */
-#line 134 "gpp_interpreter.y"
-                                  { (yyval.num) = lessThanF((yyvsp[-2].str), (yyvsp[-1].str)); }
+  case 23: /* EXPI: OP_OP KW_DISP EXPI OP_CP  */
+#line 150 "gpp_interpreter.y"
+                             { /*$$ = $3; fprintf(outputFile,"Display : %d\n", $3);*/}
 #line 1455 "y.tab.c"
     break;
 
-  case 29: /* EXPB: KW_TRUE  */
-#line 136 "gpp_interpreter.y"
-             { (yyval.num) = 1; }
+  case 24: /* EXPB: OP_OP KW_AND EXPB EXPB OP_CP  */
+#line 154 "gpp_interpreter.y"
+                                 { (yyval.num) = (yyvsp[-2].num) && (yyvsp[-1].num);}
 #line 1461 "y.tab.c"
     break;
 
-  case 30: /* EXPB: KW_FALSE  */
-#line 138 "gpp_interpreter.y"
-               { (yyval.num) = 0; }
+  case 25: /* EXPB: OP_OP KW_OR EXPB EXPB OP_CP  */
+#line 156 "gpp_interpreter.y"
+                                 { (yyval.num) = (yyvsp[-2].num) || (yyvsp[-1].num); }
 #line 1467 "y.tab.c"
     break;
 
-  case 31: /* EXPB: OP_OP KW_DISP EXPB OP_CP  */
-#line 140 "gpp_interpreter.y"
-                             { /* $$ = $3; fprintf(outputFile,"Display : %s\n", ($3 ? "T":"NIL")); */}
+  case 26: /* EXPB: OP_OP KW_NOT EXPB OP_CP  */
+#line 158 "gpp_interpreter.y"
+                             { (yyval.num) = ! ((yyvsp[-1].num)); }
 #line 1473 "y.tab.c"
     break;
 
-  case 32: /* FUNCTION: OP_OP KW_DEF IDENTIFIER IDENTIFIER IDENTIFIER EXPI OP_CP  */
-#line 145 "gpp_interpreter.y"
+  case 27: /* EXPB: OP_OP KW_EQUAL EXPB EXPB OP_CP  */
+#line 160 "gpp_interpreter.y"
+                                   { (yyval.num) = ((yyvsp[-2].num) == (yyvsp[-1].num)); }
+#line 1479 "y.tab.c"
+    break;
+
+  case 28: /* EXPB: OP_OP KW_EQUAL EXPI EXPI OP_CP  */
+#line 162 "gpp_interpreter.y"
+                                   { (yyval.num) = equalF((yyvsp[-2].str), (yyvsp[-1].str)); }
+#line 1485 "y.tab.c"
+    break;
+
+  case 29: /* EXPB: OP_OP KW_LESS EXPI EXPI OP_CP  */
+#line 164 "gpp_interpreter.y"
+                                  { (yyval.num) = lessThanF((yyvsp[-2].str), (yyvsp[-1].str)); }
+#line 1491 "y.tab.c"
+    break;
+
+  case 30: /* EXPB: KW_TRUE  */
+#line 166 "gpp_interpreter.y"
+             { (yyval.num) = 1; }
+#line 1497 "y.tab.c"
+    break;
+
+  case 31: /* EXPB: KW_FALSE  */
+#line 168 "gpp_interpreter.y"
+               { (yyval.num) = 0; }
+#line 1503 "y.tab.c"
+    break;
+
+  case 32: /* EXPB: OP_OP KW_DISP EXPB OP_CP  */
+#line 170 "gpp_interpreter.y"
+                             { /* $$ = $3; fprintf(outputFile,"Display : %s\n", ($3 ? "T":"NIL")); */}
+#line 1509 "y.tab.c"
+    break;
+
+  case 33: /* FUNCTIONDEF: OP_OP KW_DEF IDENTIFIER IDENTIFIER IDENTIFIER EXPI OP_CP  */
+#line 175 "gpp_interpreter.y"
                                                              { 
                                                                 (yyval.str) = (yyvsp[-4].str); 
                                                                 createFunction2((yyvsp[-4].str), (yyvsp[-3].str), (yyvsp[-2].str), (yyvsp[-1].str)); 
                                                             }
-#line 1482 "y.tab.c"
+#line 1518 "y.tab.c"
     break;
 
-  case 33: /* FUNCTION: OP_OP KW_DEF IDENTIFIER IDENTIFIER EXPI OP_CP  */
-#line 151 "gpp_interpreter.y"
+  case 34: /* FUNCTIONDEF: OP_OP KW_DEF IDENTIFIER IDENTIFIER EXPI OP_CP  */
+#line 181 "gpp_interpreter.y"
                                                   { 
                                                     (yyval.str) = (yyvsp[-3].str); 
                                                     createFunction1((yyvsp[-3].str), (yyvsp[-2].str), (yyvsp[-1].str)); 
                                                 }
-#line 1491 "y.tab.c"
+#line 1527 "y.tab.c"
     break;
 
-  case 34: /* FUNCTION: OP_OP KW_DEF IDENTIFIER IDENTIFIER OP_CP  */
-#line 157 "gpp_interpreter.y"
+  case 35: /* FUNCTIONDEF: OP_OP KW_DEF IDENTIFIER IDENTIFIER OP_CP  */
+#line 187 "gpp_interpreter.y"
                                              { 
                                                 (yyval.str) = (yyvsp[-2].str); 
                                                 createFunction0((yyvsp[-2].str), (yyvsp[-1].str)); 
                                             }
-#line 1500 "y.tab.c"
+#line 1536 "y.tab.c"
+    break;
+
+  case 36: /* FUNCTIONCALL: OP_OP IDENTIFIER EXPI EXPI OP_CP  */
+#line 195 "gpp_interpreter.y"
+                                     { 
+                                        char * expressionToEvaluate = callFunction2((yyvsp[-3].str), (yyvsp[-2].str), (yyvsp[-1].str));
+                                        if(expressionToEvaluate != NULL){
+                                            //calculate the expression and return the result
+                                            findParantheses(expressionToEvaluate);
+                                            printParanthesesHashList();
+                                            (yyval.str) = evaluateExpression(expressionToEvaluate);
+                                        }
+                                         
+                                        printf("burdayim call da\n");
+                                    }
+#line 1552 "y.tab.c"
+    break;
+
+  case 37: /* FUNCTIONCALL: OP_OP IDENTIFIER EXPI OP_CP  */
+#line 208 "gpp_interpreter.y"
+                                { 
+                                    (yyval.str) = callFunction1((yyvsp[-2].str), (yyvsp[-1].str)); 
+                                }
+#line 1560 "y.tab.c"
+    break;
+
+  case 38: /* FUNCTIONCALL: OP_OP IDENTIFIER OP_CP  */
+#line 213 "gpp_interpreter.y"
+                           { 
+                                (yyval.str) = callFunction0((yyvsp[-1].str)); 
+                            }
+#line 1568 "y.tab.c"
     break;
 
 
-#line 1504 "y.tab.c"
+#line 1572 "y.tab.c"
 
       default: break;
     }
@@ -1693,12 +1761,13 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 162 "gpp_interpreter.y"
+#line 217 "gpp_interpreter.y"
 
 
 int yyerror(char *error) {
     // this function is called when an error occurs. for example, when the input is not in the language. (syntax error)
     fprintf(outputFile, "SYNTAX ERROR \n");
+    exit(1); // exit with error
 }
 
 void writeList(int *list){

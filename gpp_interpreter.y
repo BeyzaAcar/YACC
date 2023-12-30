@@ -60,7 +60,8 @@ void writeList(int *list);
 /*Types*/
 %type <str> EXPI
 %type <num> EXPB
-%type <str> FUNCTION
+%type <str> FUNCTIONDEF
+%type <str> FUNCTIONCALL
 %start START
 
 %%
@@ -95,13 +96,42 @@ EXPI:
                                     }
 
     |
-    OP_OP OP_MINUS EXPI EXPI OP_CP { $$ = subF($3, $4); } 
+    OP_OP OP_MINUS EXPI EXPI OP_CP { 
+                                        if(isDigit($3[0]) && isDigit($4[0])){
+                                                $$ = subF($3, $4); 
+                                        } 
+                                        else{
+                                            //string concat ( new string: (+ $3 $4) )
+                                            char * result = createExpString($3, $4, "-");
+                                            $$ = result;
+                                        }
+                                    } 
     |
-    OP_OP OP_MULT EXPI EXPI OP_CP  { $$ = multF($3, $4); }
+    OP_OP OP_MULT EXPI EXPI OP_CP  { 
+                                        if(isDigit($3[0]) && isDigit($4[0])){
+                                                $$ = multF($3, $4); 
+                                        } 
+                                        else{
+                                            //string concat ( new string: (+ $3 $4) )
+                                            char * result = createExpString($3, $4, "*");
+                                            $$ = result;
+                                        } 
+                                    }
     |
-    OP_OP OP_DIV EXPI EXPI OP_CP   {  $$ = divF($3, $4); }
+    OP_OP OP_DIV EXPI EXPI OP_CP   {  
+                                        if(isDigit($3[0]) && isDigit($4[0])){
+                                                $$ = divF($3, $4); 
+                                        } 
+                                        else{
+                                            //string concat ( new string: (+ $3 $4) )
+                                            char * result = createExpString($3, $4, "/");
+                                            $$ = result;
+                                        }  
+                                    }
     |
-    FUNCTION { printf("a function named %s is created\n", $1); $$ = $1; }
+    FUNCTIONDEF { printf("a function named %s is created\n", $1); $$ = $1; }
+    |
+    FUNCTIONCALL { printf("a function named %s is called\n", $1); $$ = $1; }
     |
     OP_OP IDENTIFIER OP_CP {$$ = getVariableValue($2); }
     |
@@ -140,7 +170,7 @@ EXPB:
     OP_OP KW_DISP EXPB OP_CP { /* $$ = $3; fprintf(outputFile,"Display : %s\n", ($3 ? "T":"NIL")); */}
     ;
 
-FUNCTION:
+FUNCTIONDEF:
     // 2 parameters function definitions
     OP_OP KW_DEF IDENTIFIER IDENTIFIER IDENTIFIER EXPI OP_CP { 
                                                                 $$ = $3; 
@@ -159,11 +189,37 @@ FUNCTION:
                                                 createFunction0($3, $4); 
                                             }
     ;
+
+FUNCTIONCALL:
+    // 2 parameters function call
+    OP_OP IDENTIFIER EXPI EXPI OP_CP { 
+                                        char * expressionToEvaluate = callFunction2($2, $3, $4);
+                                        if(expressionToEvaluate != NULL){
+                                            //calculate the expression and return the result
+                                            findParantheses(expressionToEvaluate);
+                                            printParanthesesHashList();
+                                            $$ = evaluateExpression(expressionToEvaluate);
+                                        }
+                                         
+                                        printf("burdayim call da\n");
+                                    }
+    |
+    // 1 parameter function call
+    OP_OP IDENTIFIER EXPI OP_CP { 
+                                    $$ = callFunction1($2, $3); 
+                                }
+    |
+    // 0 parameter function call
+    OP_OP IDENTIFIER OP_CP { 
+                                $$ = callFunction0($2); 
+                            }
+    ;
 %%
 
 int yyerror(char *error) {
     // this function is called when an error occurs. for example, when the input is not in the language. (syntax error)
     fprintf(outputFile, "SYNTAX ERROR \n");
+    exit(1); // exit with error
 }
 
 void writeList(int *list){
