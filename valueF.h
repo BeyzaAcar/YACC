@@ -1,7 +1,9 @@
+// Creator:  <Beyza Acar>
+
 #ifndef VALUEF_H
 #define VALUEF_H
 
-#include "helpers.h"
+#include "structs.h"
 #include <stdlib.h>
 
 /*
@@ -34,14 +36,19 @@ char *valuefToString(valuef_t valuef){
 valuef_t createValueF(char *str){
     //it is assumed that str is in the form of "numerator(f)denominator"
     //for example: "1f2" or "123f456"
-
     valuef_t valuef;
     char *numerator = malloc(sizeof(char) * 10); // max 10 digits
     char *denominator = malloc(sizeof(char) * 10); // max 10 digits
     int i = 0;
-    while (str[i] != 'f'){
+    while (str[i] != 'f' && str[i] != '\0'){
         numerator[i] = str[i];
         i++;
+    }
+    //if there are no 'f' in the string, this is an error
+    if (str[i] == '\0'){
+        printf("ERROR: This is not a valueF\n");
+        printf("Exiting...\n");
+        exit(1);
     }
     numerator[i] = '\0';
     i++;
@@ -57,21 +64,20 @@ valuef_t createValueF(char *str){
     return valuef;
 }
 
-// find greatest common divisor
+// OPERATIONS ON VALUEF OPERANDS
+
 int findGCD(int a, int b){
     if (b == 0)
         return a;
     return findGCD(b, a % b);
 }
-
-// simplify valuef
 valuef_t simplifyF(valuef_t valuef){
+    // simplifies a valuef_t
     int gcd = findGCD(valuef.numerator, valuef.denominator);
     valuef.numerator /= gcd;
     valuef.denominator /= gcd;
     return valuef;
 }
-
 char* sumF(char* a, char* b){
     valuef_t valuefA = createValueF(a);
     valuef_t valuefB = createValueF(b);
@@ -81,7 +87,6 @@ char* sumF(char* a, char* b){
     result = simplifyF(result);
     return valuefToString(result);
 }
-
 char* subF(char* a, char* b){
     valuef_t valuefA = createValueF(a);
     valuef_t valuefB = createValueF(b);
@@ -91,7 +96,6 @@ char* subF(char* a, char* b){
     result = simplifyF(result);
     return valuefToString(result);
 }
-
 char* multF(char* a, char* b){
     valuef_t valuefA = createValueF(a);
     valuef_t valuefB = createValueF(b);
@@ -101,7 +105,6 @@ char* multF(char* a, char* b){
     result = simplifyF(result);
     return valuefToString(result);
 }
-
 char* divF(char* a, char* b){
     valuef_t valuefA = createValueF(a);
     valuef_t valuefB = createValueF(b);
@@ -111,26 +114,14 @@ char* divF(char* a, char* b){
     result = simplifyF(result);
     return valuefToString(result);
 }
-
-
 int equalF(char* a, char* b){
-    printf("equalF\n");
-    printf("a: %s\n", a);
-    printf("b: %s\n", b);
     valuef_t valuefA = createValueF(a);
     valuef_t valuefB = createValueF(b);
-
-    printf("after createValueF\n");
-    printf("valuefA.numerator: %d\n", valuefA.numerator);
-    printf("valuefA.denominator: %d\n", valuefA.denominator);
-    printf("valuefB.numerator: %d\n", valuefB.numerator);
-    printf("valuefB.denominator: %d\n", valuefB.denominator);
 
     if(valuefA.numerator * valuefB.denominator == valuefB.numerator * valuefA.denominator)
         return 1;
     return 0;
 }
-
 int lessThanF(char* a, char* b){
     valuef_t valuefA = createValueF(a);
     valuef_t valuefB = createValueF(b);
@@ -153,9 +144,6 @@ int isDigitF(char c){
     return 0;
 }
 
-// EVALUATE AN EXPRESSION WITH VALUEF OPERANDS RECURSIVELY USING THE ABOVE FUNCTIONS
-// example : (- (+ 2f2 8f4) 1f1) --> (- 3f1 1f1) --> 2f1 
-
 int paranthesesHashList[1000] ; // list of parantheses hash
 
 //This method finds the pairs of parantheses and adds them to the paranthesesHashList 
@@ -164,42 +152,26 @@ int paranthesesHashList[1000] ; // list of parantheses hash
 //So when i try to reach the end of the parantheses pair of index 0, i can reach it by paranthesesHashList[0] = 13th index
 void findParantheses(char *expression){
     //fill with -1 first
-    printf("findParantheses\n");
     for(int i = 0; i < 1000; i++)
         paranthesesHashList[i] = -1;
 
     int begin = 0;
     int end = strlen(expression) - 1;
-    while(end> begin && end+begin < strlen(expression) && end > 0 && begin < strlen(expression))
+    while(end> begin && end < strlen(expression) && begin < strlen(expression))
     {
-        printf("begin: %d\n", begin);
-        printf("end: %d\n", end);
-        while (expression[begin] != '(' && begin < strlen(expression))
-        {
-            printf("begin inside: %d\n", begin);
+        while (begin < strlen(expression) && expression[begin] != '(')
             begin++;
-        }
-        while(expression[end] != ')' && end > 0)
-        {
-            printf("end inside: %d\n", end);
+        while(end > 0 && expression[end] != ')')
             end--;
-        }
 
         paranthesesHashList[begin] = end;
 
         begin++;
         end--;
     }
-    paranthesesHashList[begin-1] = -1;
+    paranthesesHashList[begin-1] = -1; 
     
 }
-
-void printParanthesesHashList(){
-    printf("printParanthesesHashList\n");
-    for(int i = 0; i < 25; i++)
-        printf("paranthesesHashList[%d] = %d\n", i, paranthesesHashList[i]);
-}
-
 
 /**
  * begin offset is the ditance from the beginning of the original expression
@@ -210,14 +182,12 @@ void printParanthesesHashList(){
 */
 char * evaluateExpressionHelper(char * expression, int beginOffset)
 {
-    //printf("evaluateExpressionHelper\n");
-    //printf("expression: %s\n", expression);
     char * operand1 = malloc(sizeof(char) * 100);
     char * operand2 = malloc(sizeof(char) * 100);
     char operator = expression[1]; // operator is the second character of the expression 
-    //printf("operator: %c\n", operator);
     int i = 1;
     int lenExp = strlen(expression);
+
     //first operand
     while(i < lenExp)
     {
@@ -236,17 +206,16 @@ char * evaluateExpressionHelper(char * expression, int beginOffset)
         else if(expression[i] == '(') // first operand is an expression
         {
             int closeParanthesesIndex = paranthesesHashList[i + beginOffset];
-            //operand 1 is the expression between i and j 
             int k = 0;
-            while(i < closeParanthesesIndex - beginOffset+1)
+            int beginOffsetHold = i;
+            while(i < closeParanthesesIndex - beginOffset)
             {
                 operand1[k] = expression[i];
                 i++;
                 k++;
             }
             operand1[k] = '\0';
-            // recursive call to evaluate the expression
-            operand1 = evaluateExpressionHelper(operand1, i + beginOffset); 
+            operand1 = evaluateExpressionHelper(operand1, beginOffset+ beginOffsetHold); 
             break;
         }
         i++;
@@ -269,8 +238,8 @@ char * evaluateExpressionHelper(char * expression, int beginOffset)
         else if(expression[i] == '(') // second operand is an expression
         {
             int closeParanthesesIndex = paranthesesHashList[i + beginOffset];
-            //operand 2 is the expression between i and j 
             int k = 0;
+            int beginOffsetHold = i;
             while(i < closeParanthesesIndex - beginOffset)
             {
                 operand2[k] = expression[i];
@@ -278,16 +247,12 @@ char * evaluateExpressionHelper(char * expression, int beginOffset)
                 k++;
             }
             operand2[k] = '\0';
-            // recursive call to evaluate the expression
-            operand2 = evaluateExpressionHelper(operand2, i + beginOffset); 
+            operand2 = evaluateExpressionHelper(operand2, beginOffsetHold + beginOffset); 
             break;
         }
         i++;
     }
     
-    printf("operand1: %s\n and the expression is %s\n", operand1, expression);
-    printf("operand2: %s\n and the expression is %s\n", operand2, expression);
-    printf("operator: %c\n", operator);
     //evaluate the expression
     char * result = malloc(sizeof(char) * 100);
     switch(operator)
@@ -304,20 +269,6 @@ char * evaluateExpressionHelper(char * expression, int beginOffset)
         case '/':
             result = divF(operand1, operand2);
             break;
-        //TODO: add other operators 
-        /*case '=':
-            if(equalF(operand1, operand2))
-                result = "1";
-            else
-                result = "0";
-            break;
-        case '<':
-            if(lessThanF(operand1, operand2))
-                result = "1";
-            else
-                result = "0";
-            break;
-            */
         default:
             printf("Invalid operator\n");
             break;

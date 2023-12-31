@@ -4,13 +4,12 @@
 #include <stdlib.h> //for exit function and malloc
 #include <string.h> //for string operations
 
-#include "helpers.h" // for all the structs (valuef_t, variable_t, function_t)
+#include "structs.h" // for all the structs (valuef_t, variable_t, function_t)
 #include "helperMethods.h" // for all the helper methods 
 
 FILE *inputFile,*outputFile, *strFile; //input and output files for reading and writing
 
 extern FILE *yyin;
-void writeList(int *list);
 
 #include "valueF.h" //functions for fractional numbers
 #include "variables.h" //functions for variables (set, get)
@@ -67,13 +66,13 @@ void writeList(int *list);
 %%
 /*gpp Concrete Syntax*/
 START:
-    EXPI {printf("expi"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $1 );}
+    EXPI { fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $1 );}
     |
-    EXPB {printf("expb"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $1 == 1 ? "TRUE" : "FALSE");}
+    EXPB {fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $1 == 1 ? "TRUE" : "FALSE");}
     |
-    START EXPI {fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $2); printf("expression is : %s\n", $2);}
+    START EXPI {fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $2); }
     |
-    START EXPB {printf("start expb"); fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $2 == 1 ? "TRUE" : "FALSE");}
+    START EXPB {fprintf(outputFile,"CORRECT SYNTAX. \nResult: %s\n", $2 == 1 ? "TRUE" : "FALSE");}
     |
     COMMENT {}
     |
@@ -129,9 +128,9 @@ EXPI:
                                         }  
                                     }
     |
-    FUNCTIONDEF { printf("a function named %s is created\n", $1); $$ = $1; }
+    FUNCTIONDEF {/* printf("a function named %s is created\n", $1);*/ $$ = $1; }
     |
-    FUNCTIONCALL { printf("a function named %s is called\n", $1); $$ = $1; }
+    FUNCTIONCALL { /*printf("a function named %s is called\n", $1);*/ $$ = $1; }
     |
     OP_OP IDENTIFIER OP_CP {$$ = getVariableValue($2); }
     |
@@ -139,7 +138,7 @@ EXPI:
     |
     VALUEF {$$ = valuefToString($1) ;}
     |
-    OP_OP KW_SET IDENTIFIER EXPI OP_CP {printf("burdayim sette\n"); $$ = $4; setVariable($3, $4);}
+    OP_OP KW_SET IDENTIFIER EXPI OP_CP { $$ = $4; setVariable($3, $4);}
     |
     OP_OP KW_IF EXPB EXPI OP_CP { $$ = $3 ? $4 : "FALSE"; }  
     |
@@ -147,7 +146,7 @@ EXPI:
     |
     OP_OP KW_IF EXPB EXPI EXPI OP_CP { /* $$ = isTrue($3) ? $4 : $5; */ }
     |
-    OP_OP KW_DISP EXPI OP_CP { /*$$ = $3; fprintf(outputFile,"Display : %d\n", $3);*/}
+    OP_OP KW_DISP EXPI OP_CP { $$ = $3; fprintf(outputFile,"Display : %s\n", $3);}
     ;
 
 EXPB:
@@ -184,7 +183,7 @@ FUNCTIONDEF:
                                                 }
     |
     // 0 parameter function definitions
-    OP_OP KW_DEF IDENTIFIER IDENTIFIER OP_CP { 
+    OP_OP KW_DEF IDENTIFIER EXPI OP_CP { 
                                                 $$ = $3; 
                                                 createFunction0($3, $4); 
                                             }
@@ -197,21 +196,23 @@ FUNCTIONCALL:
                                         if(expressionToEvaluate != NULL){
                                             //calculate the expression and return the result
                                             findParantheses(expressionToEvaluate);
-                                            printParanthesesHashList();
                                             $$ = evaluateExpression(expressionToEvaluate);
                                         }
-                                         
-                                        printf("burdayim call da\n");
                                     }
     |
     // 1 parameter function call
     OP_OP IDENTIFIER EXPI OP_CP { 
-                                    $$ = callFunction1($2, $3); 
+                                    char * expressionToEvaluate = callFunction1($2, $3);
+                                    if(expressionToEvaluate != NULL){
+                                        //calculate the expression and return the result
+                                        findParantheses(expressionToEvaluate);
+                                        $$ = evaluateExpression(expressionToEvaluate);
+                                    }
                                 }
     |
     // 0 parameter function call
-    OP_OP IDENTIFIER OP_CP { 
-                                $$ = callFunction0($2); 
+    OP_OP IDENTIFIER OP_OP OP_CP OP_CP { 
+                                $$ = callFunction0($2);
                             }
     ;
 %%
@@ -220,19 +221,6 @@ int yyerror(char *error) {
     // this function is called when an error occurs. for example, when the input is not in the language. (syntax error)
     fprintf(outputFile, "SYNTAX ERROR \n");
     exit(1); // exit with error
-}
-
-void writeList(int *list){
-    fprintf(outputFile, "(");
-    for(int i=0;list[i]!=-999; ++i){
-      if(list[i+1]!=-999){
-        fprintf(outputFile,"%d ", list[i]);
-      }
-      else{
-        fprintf(outputFile,"%d", list[i]);
-      }
-    }
-    fprintf(outputFile, ")\n");
 }
 
 
@@ -273,8 +261,8 @@ int main(int argc, char **argv){
     //after reading, tokenize by using string stream fuction fmemopen
     strFile = fmemopen (line, strlen (line) - 1, "r");
     yyin = strFile;
-    yyparse();
+    yyparse(); // This method calls yylex() and yyerror() methods automatically
     printf("The output.txt file is created!\n");
   }
-  exit(-1);
+  return 0;
 }

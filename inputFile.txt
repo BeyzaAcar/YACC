@@ -1,8 +1,59 @@
+;; Program starts from here
 
-(+ (+ 4f2 z) y)
+;;SOME NOTES: if you want to have the value of an identifier, the rule for this is :
+    ;; (IdentifierName)
 
-(def sum x y (- (+ x      y) y))
 
-;; Function call
+(set x 5f5)
+(x)
 
+(set y 4f1)
+(y)
+
+(set z 3f3)
+(z)
+
+(equal (x) (z))
+
+(equal (x) (y))
+
+(less (x) (y))
+
+(less (y) (x))
+
+;;Boolean expressions 
+
+(and true true)
+(and true false)
+(or true false)
+(or false false)
+(not true)
+(not false)
+
+;;Basic Operations
+
+(+ 4f4 5f5)
+(- 1f2 1f2)
+(* 4f1 3f2)
+(/ 4f2 3f2)
+
+;;Nested expression example ((4 + 5) - 2 * 3)
+(* 3f1 (-(+ 4f1 5f1) 2f1))
+
+;; Function definitions and calls(used the above nested expression)
+(def aFunc a b (* a (- (+ 4f1 b) b))) ;;(((4f1 + b) - b) * a) ;; (* 3f1 (- (+ 4f1 2f1) 2f1))
+(aFunc 3f1 2f1)
+
+(def sum x y (+ (+ x      y) y))
 ( sum 8f1 6f1 )
+
+(if (equal 5f5 4f4) IfIsWorking)
+(if (equal 3f5 4f4) IfIsNotWorking)
+
+;; Some syntax errors
+;;(+ 4 1)
+;;+ 4f1 5f1
+;;(+- 6f6 6f6)
+;;(set 5f5 6f6)
+
+(exit)

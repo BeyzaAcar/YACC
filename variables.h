@@ -1,7 +1,7 @@
 #ifndef VARIABLES_H
 #define VARIABLES_H
 
-#include "helpers.h" //to use valuef_t type (fractional value)
+#include "structs.h" //to use valuef_t type (fractional value)
 
 //In this file, we will define the functions to handle variables 
 //All variables will be kept in a linked list (node_t) 
@@ -18,26 +18,9 @@ typedef struct node_s
 // head of the linked list to keep variables
 node_t *head;
 
-
-// print all variables
-
-void printVariables()
-{
-    node_t *temp = head;
-    while(temp != NULL)
-    {
-        printf("%s = %s\n", temp->name, temp->data);
-        temp = temp->next;
-    }   
-}
-
-
-
-//KONTROL EDILECEK!!!!!!!!!
 // function to create a new node
 void setVariable(char *name, char* data) // update can be done in this function too
 {
-    printf("sette alıyorum\n");
     node_t *temp = head;
     // if head is null, create a new node and assign it to head 
     if(head == NULL)
@@ -74,16 +57,11 @@ void setVariable(char *name, char* data) // update can be done in this function 
 // function to get a variable from linked list
 char* getVariableValue(char *name)
 {
-    printf("gette alıyorum\n");
     node_t *temp = head;
     while(temp != NULL)
     {
         if(strcmp(temp->name, name) == 0)
-        {
-            printf("variable %s is defined\n", name);
-            printf("value of %s is %s\n", name, temp->data);
             return temp->data;
-        }
         temp = temp->next;
     }
     printf("Variable %s is not defined\n", name);

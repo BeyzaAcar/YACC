@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "helpers.h"
+#include "structs.h"
 #include "y.tab.h"
 //FILE *inputFile,*outputFile,*strFile;
 %}
@@ -17,21 +17,21 @@
 \/ { return OP_DIV; }
 \* { return OP_MULT; }
 
-\( {printf(".l dosyasinda OP_OP dönderiyom\n"); return OP_OP; }
-\) {printf(".l dosyasinda OP_CP dönderiyom\n"); return OP_CP; }
+\( { return OP_OP; }
+\) { return OP_CP; }
 \, { return OP_COMMA; }
 
 and { return KW_AND; }
 def { return KW_DEF; }
 or { return KW_OR; }
 not { return KW_NOT; }
-equal {printf(".l dosysasinda equal donderiyom\n"); return KW_EQUAL; }
-less {printf(".l dosysasinda less donderiyom\n"); return KW_LESS; }
+equal { return KW_EQUAL; }
+less { return KW_LESS; }
 nil { return KW_NIL; }
 list { return KW_LIST; }
 append { return KW_APPEND; }
 concat { return KW_CONCAT; }
-set {printf(".l dosyasinda set donderiyom\n"); return KW_SET; }
+set { return KW_SET; }
 for { return KW_FOR; }
 if  { return KW_IF; }
 exit { return KW_EXIT; }
@@ -57,11 +57,8 @@ false { return KW_FALSE; }
 
  /* rule for identifier*/
 [a-zA-Z][0-9a-zA-Z]* {
-                      printf("seg fault ???\n");
-                      printf("yylval.str = %d\n", yylval.str);
                       yylval.str = malloc(strlen(yytext)+1); //+1 for '\0' at the end
                       strcpy(yylval.str, yytext);
-                      printf(".l dosyasinda IDENTIFIER dönderiyom\n");
                       return IDENTIFIER; }
 [\n\f\r\t ] {} /*ignorable tokens*/
 
@@ -70,13 +67,13 @@ false { return KW_FALSE; }
  /*
   * ERRORS
   */
-. {printf(".l dosyasinda er dönderiyom\n"); return 0; }
-([a-zA-Z]*[,+-/*])|([0-9][0-9a-zA-Z]+) { printf(".l dosyasinda error dönderiyom\n"); return 0;}
-[+][0-9A-zA-Z]* {printf(".l dosyasinda error dönderiyom\n"); return 0;}
-[-][0-9A-zA-Z]*	{printf(".l dosyasinda error dönderiyom\n"); return 0;}
-[/][0-9A-zA-Z]* { printf(".l dosyasinda error dönderiyom\n"); return 0;}
-[*][0-9A-zA-Z]* { printf(".l dosyasinda error dönderiyom\n"); return 0;}
-[,][0-9A-zA-Z]* { printf(".l dosyasinda error dönderiyom\n"); return 0;}
+. { return 0; }
+([a-zA-Z]*[,+-/*])|([0-9][0-9a-zA-Z]+) {  return 0;}
+[+][0-9A-zA-Z]* { return 0;}
+[-][0-9A-zA-Z]*	{ return 0;}
+[/][0-9A-zA-Z]* {  return 0;}
+[*][0-9A-zA-Z]* {  return 0;}
+[,][0-9A-zA-Z]* {  return 0;}
 %%
 int yywrap(){}
 
